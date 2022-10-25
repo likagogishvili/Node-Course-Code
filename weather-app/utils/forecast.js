@@ -10,8 +10,8 @@ const forecast = (latitude, longitude, callback) => {
     } else {
       callback(undefined, {
         weather_descriptions: response.body.current.weather_descriptions[0],
-        temperature: response.body.current.temperature,
-        feelslike: response.body.current.feelslike,
+        temperature: ((response.body.current.temperature-32)/1.80000).toFixed(1),
+        feelslike: ((response.body.current.feelslike-32)/1.80000).toFixed(1),
       });
     }
   });
