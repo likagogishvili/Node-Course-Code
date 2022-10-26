@@ -1,3 +1,4 @@
+// id = f8578069342171e6ec32807958bcdc8f
 const request = require("postman-request");
 const geocode = (address, callback) => {
   const url = `https://api.openweathermap.org/geo/1.0/direct?q=${address}&limit=5&appid=f8578069342171e6ec32807958bcdc8f`;

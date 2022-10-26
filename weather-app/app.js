@@ -19,9 +19,6 @@ const forcast = require("./utils/forecast");
 //   }
 // });
 
-
-
-
 ////callback chaining
 const adress = process.argv[2]
 if(!adress){
