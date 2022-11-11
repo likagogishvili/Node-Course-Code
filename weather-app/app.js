@@ -20,19 +20,45 @@ const forcast = require("./utils/forecast");
 // });
 
 ////callback chaining
+// const adress = process.argv[2]
+// if(!adress){
+//   console.log('Please Provide an adress')
+// }else{
+//   geocode(adress, (error, data) => {
+//     if (error) {
+//       return console.log(error);
+//     } else {
+//       forcast(data.latitude, data.longitude, (error, forcastData) => {
+//         if (error) {
+//           return console.log(error);
+//         } else {
+//           forcastData['location']=data.location
+//           return console.log(forcastData);
+//         }
+//       });
+//     }
+//   });
+  
+// }
+
+
+
+
+
+//objrct destructuring
 const adress = process.argv[2]
 if(!adress){
   console.log('Please Provide an adress')
 }else{
-  geocode(adress, (error, data) => {
+  geocode(adress, (error, {latitude, longitude, location}={}) => {
     if (error) {
       return console.log(error);
     } else {
-      forcast(data.latitude, data.longitude, (error, forcastData) => {
+      forcast(latitude, longitude, (error, forcastData) => {
         if (error) {
           return console.log(error);
         } else {
-          forcastData['location']=data.location
+          forcastData['location']=location
           return console.log(forcastData);
         }
       });
