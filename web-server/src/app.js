@@ -1,10 +1,9 @@
 const path = require("path");
 const express = require("express");
-const hbs = require('hbs')
-
-
+const hbs = require("hbs");
+const geocode = require("./utils/geocode");
+const forecast = require("./utils/forecast");
 const app = express();
-
 
 //Define paths for express config
 const publicDirectoryPath = path.join(__dirname, "../public");
@@ -18,14 +17,10 @@ app.set("view engine", "hbs");
 //setting new path for views
 app.set("views", viewPath);
 //register partioals
-hbs.registerPartials(partialsPath)
-
+hbs.registerPartials(partialsPath);
 
 //Setup static directory to serve
 app.use(express.static(publicDirectoryPath));
-
-
-
 
 app.get("", (req, res) => {
   res.render("index", {
@@ -50,21 +45,65 @@ app.get("/help", (req, res) => {
   });
 });
 app.get("/help/*", (req, res) => {
-  res.render('404',{
-    title:'404',
-    name:'Lika gogishvili',
-    errorMessage:'help article not found'
-  })
+  res.render("404", {
+    title: "404",
+    name: "Lika gogishvili",
+    errorMessage: "help article not found",
+  });
 });
+
+app.get("/weather", (req, res) => {
+  if (!req.query.address) {
+    return res.send({
+      error: "You must provide an address",
+    });
+  } else {
+    const adress = req.query.address;
+    geocode(adress, (error, { latitude, longitude, location } = {}) => {
+      if (error) {
+        return res.send({
+          error: error,
+        });
+      } else {
+        forecast(latitude, longitude, (error, forcastData) => {
+          if (error) {
+            return res.send({
+              error: error,
+            });
+          } else {
+            forcastData["location"] = location;
+            return res.send({
+              weather_descruotion: forcastData.weather_descriptions,
+              temperature: forcastData.temperature,
+              feelslike: forcastData.feelslike,
+              location: forcastData.location,
+              adress: req.query.address,
+            });
+          }
+        });
+      }
+    });
+  }
+});
+
 app.get("*", (req, res) => {
-  res.render('404',{
-    title:'404',
-    name:'Lika gogishvili',
-    errorMessage:'Page not Found'
-  })
+  res.render("404", {
+    title: "404",
+    name: "Lika gogishvili",
+    errorMessage: "Page not Found",
+  });
 });
 
-
+// app.get("/products", (req, res) => {
+//   if (!req.query.search) {
+//     return res.send({
+//       error: "You must provide a search term",
+//     });
+//   }
+//   res.send({
+//     products: [],
+//   });
+// });
 
 //sending objects on web page
 // app.get("/help", (req, res) => {
@@ -85,13 +124,6 @@ app.get("*", (req, res) => {
 
 //   );
 // });
-
-app.get("/weather", (req, res) => {
-  res.send({
-    forecas: "It is snowing",
-    location: "philadelphia",
-  });
-});
 
 app.listen(3000, () => {
   console.log("Server is up onn port 3000.");
